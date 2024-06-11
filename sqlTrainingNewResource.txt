@@ -1,0 +1,387 @@
+IMPORTING EXCEL FILES IN SQL SERVER
+
+USE newdb1;
+
+CREATE TABLE emp (EmpId int , Name varchar(50), Salary int , 
+City varchar(50) , Designation varchar(60), JoiningDate text , Age int);
+
+-- import csv file 
+
+BULK INSERT dbo.emp
+FROM 'C:\Users\user\Downloads\Book11.csv'
+WITH
+(
+FORMAT='CSV',
+FIRSTROW=2
+)
+GO
+
+SELECT * FROM emp;
+
+---------------------------------------------------------------------------------------
+
+
+-- SQL AND , OR , NOT
+-- SQL ORDER BY
+-- SQL SELECT TOP
+-- SQL MIN AND MAX
+-- SQL COUNT , AVG , SUM
+-- SQL LIKE
+-- SQL IN
+-- SQL BETWEEN
+
+CREATE DATABASE sqlagop;
+
+USE sqlagop;
+
+CREATE TABLE userdata(id int not null identity(1,1) ,
+name varchar(50),
+city varchar(50),
+age int,
+salary int
+);
+
+INSERT INTO userdata (name,city,age,salary) VALUES ('John','Selangor',23,5000);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Shabina','KL',21,3000);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Tom','KL',26,4000);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Alex','Selangor',24,8000);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Smith','Selangor',18,1000);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Nurul','KL',26,6000);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Mathews','Selangor',23,5000);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Amir','KL',22,3000);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Atif','Selangor',25,4500);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Ana','KL',19,1500);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Thomas','Selangor',27,7500);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Christina','KL',22,3500);
+
+SELECT * FROM userdata;
+
+-- SQL AND , OR , NOT
+
+-- AND OPERATOR
+-- AND REQUIRES BOTH THE CONDITIONS TO BE TRUE
+
+SELECT * FROM userdata
+
+SELECT * FROM userdata WHERE city='KL' AND age>20
+
+-- OR Operator
+-- OR requires if any one of the condition is TRUE , it will return the resultset
+-- but if both the conditions are false then it will return None
+
+SELECT * FROM userdata WHERE city='KL' OR age<18
+
+-- NOT Operator
+-- select the data where city is NOT KL
+
+SELECT * FROM userdata WHERE NOT city='KL'
+
+-- Combine AND OR
+
+SELECT * FROM userdata WHERE city='Selangor' AND (age>20 or salary>4000)
+
+-- SQL ORDER BY
+
+-- ORDER BY is keyword used to sort the resultset in ascending or descending order.
+
+SELECT * FROM userdata;
+
+SELECT * FROM userdata ORDER BY age; -- by default data will be sorted in ASCENDING
+
+SELECT * FROM userdata ORDER BY age DESC; -- sort the data in descending order
+
+-- ORDER BY USING SEVERAL COLUMNS
+
+INSERT INTO userdata (name,city,age,salary) VALUES ('Ana','KL',30,1500);
+INSERT INTO userdata (name,city,age,salary) VALUES ('Ana','KL',25,1500);
+
+SELECT * FROM userdata ORDER BY name,age;
+
+-- SQL SELECT TOP
+-- used to specify the number of rows returned
+
+SELECT * FROM userdata;
+
+SELECT TOP 3 * FROM userdata;
+
+SELECT TOP 30 PERCENT * FROM userdata;
+
+SELECT TOP 30 PERCENT * FROM userdata WHERE city='KL';
+
+-- SQL MIN AND MAX
+
+SELECT * FROM userdata;
+
+SELECT MIN(salary) AS MIN_SAL FROM userdata;
+
+SELECT MAX(salary) AS MAX_SAL FROM userdata; 
+
+-- count()  avg()  sum()
+-- COUNT() return the number of rows
+-- AVG() return the average value of a numeric column
+-- SUM() return the total sum of a numeric column
+
+SELECT COUNT(id) AS total_users FROM userdata;
+
+SELECT AVG(salary) as avg_salary from userdata;
+
+SELECT SUM(salary) as total_salary from userdata;
+
+-- SQL LIKE
+
+-- SQL LIKE OPERATOR IS USED IN WHERE CLAUSE TO SEARCH FOR A SPECIFIED PATTERN
+-- IN A COLUMN
+-- THERE ARE TWO WILDCARDS OFTEN USED IN CONJUCTION WITH THE LIKE OPERATOR
+--       %
+--       _
+
+-- a.) WHERE name LIKE 'a%'   : find any value that start with a
+
+SELECT * FROM userdata WHERE name LIKE 'a%'
+
+-- b.) WHERE name LIKE '%a'   : find any value that ends with a
+
+SELECT * FROM userdata WHERE name LIKE '%a'
+
+-- c.) WHERE name LIKE '%in%'   : find %in% in any position
+
+SELECT * FROM userdata WHERE name LIKE '%in%'
+
+SELECT * FROM userdata WHERE name LIKE '%na%'
+
+-- d.) WHERE name LIKE '_o%'   : find o in second position
+
+SELECT * FROM userdata WHERE name LIKE '_o%'
+
+-- e.) WHERE name LIKE 'J%n'   : name starts with J and ends with n
+
+SELECT * FROM userdata WHERE name LIKE 'J%n'
+
+-- f.) names not start with a
+
+SELECT * FROM userdata WHERE name NOT LIKE 'a%'
+
+
+-- IN  Operator
+-- the in operator allows you to specify multiple values in a where clause
+-- the in operator is a shorthand for multiple OR
+
+SELECT * FROM userdata WHERE salary IN (1000,4000,6000,7500);
+
+SELECT * FROM userdata WHERE salary NOT IN (1000,4000,6000,7500);
+
+-- BETWEEN OPERATOR
+-- used to select values within a given range
+
+SELECT * FROM userdata WHERE salary BETWEEN 4000 and 7000;
+
+SELECT * FROM userdata WHERE salary NOT BETWEEN 4000 and 7000;
+
+SELECT * FROM userdata WHERE salary BETWEEN 4000 and 7000 AND age NOT IN (20,23,25);
+
+
+---------------------------------------------------------------------------------------
+-- PRIMARY KEY AND FOREIGN KEY
+
+-- Primary keys and foreign keys are two types of constraints that can be used to 
+-- enforce data integrity in SQL Server tables. 
+-- What is data integrity ?
+-- Data integrity is a concept and process that ensures the accuracy, 
+-- completeness, consistency, and validity of an organization's data.
+-- By following the process, organizations not only ensure the integrity 
+-- of the data but guarantee they have accurate and correct data in their database.
+
+-- A primary key is used to ensure that data in the specific column is unique. 
+-- A column cannot have NULL values
+
+-- In SQL, the FOREIGN KEY constraint is used to create a relationship between two tables. 
+-- A foreign key is defined using the FOREIGN KEY and REFERENCES keywords.
+
+
+USE newdb1;
+
+
+CREATE TABLE Customers (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(100),
+    age INTEGER
+  );
+
+-- create another table named Products
+-- add foreign key to the customer_id column
+-- the foreign key references the id column of the Customers table
+
+CREATE TABLE Products (
+    customer_id INTEGER ,
+    name VARCHAR(100),
+    FOREIGN KEY (customer_id)
+    REFERENCES Customers(id)
+  );
+
+INSERT INTO Customers VALUES
+(1, 'John', 31), (2, 'Robert',22);
+
+INSERT INTO Products VALUES
+(1, 'Keyboard'),
+(2, 'Mouse'),
+(1, 'Monitor');
+
+INSERT INTO Products VALUES (3, 'Monitor');
+
+---------------------------------------------------------------------------------------------------
+
+-- Group By Clause
+
+CREATE TABLE PERSON (ID INT NOT NULL, GENDER VARCHAR(20));
+
+INSERT INTO PERSON (ID , GENDER) VALUES (1 , 'MALE');
+INSERT INTO PERSON (ID , GENDER) VALUES (2 , 'MALE');
+INSERT INTO PERSON (ID , GENDER) VALUES (3 , 'FEMALE');
+INSERT INTO PERSON (ID , GENDER) VALUES (4 , 'MALE');
+INSERT INTO PERSON (ID , GENDER) VALUES (5 , 'FEMALE');
+INSERT INTO PERSON (ID , GENDER) VALUES (6 , 'FEMALE');
+INSERT INTO PERSON (ID , GENDER) VALUES (7 , 'MALE');
+INSERT INTO PERSON (ID , GENDER) VALUES (8 , 'FEMALE');
+
+SELECT * FROM PERSON;
+
+SELECT * FROM PERSON WHERE GENDER = 'Female';
+
+-- GET THE UNIQUE VALUES FOR GENDER
+
+SELECT GENDER FROM PERSON GROUP BY GENDER;
+
+-- TOTAL NUMBER OF MALES AND FEMALES
+
+SELECT GENDER,COUNT(ID) FROM PERSON GROUP BY GENDER;
+
+-- SQL AS KEYWORD IS USED TO RENAME THE COLUMN
+
+SELECT GENDER,COUNT(ID) AS TOTAL FROM PERSON GROUP BY GENDER;
+
+
+-- HAVING CLAUSE
+
+CREATE TABLE EMP(
+EMP_ID INT NOT NULL IDENTITY(1,1),
+EMP_SALARY INT NOT NULL,
+EMP_CITY VARCHAR(20)
+);
+
+INSERT INTO EMP (EMP_SALARY , EMP_CITY) VALUES (2000 , 'SELANGOR')
+INSERT INTO EMP (EMP_SALARY , EMP_CITY) VALUES (4000 , 'SELANGOR')
+INSERT INTO EMP (EMP_SALARY , EMP_CITY) VALUES (1000 , 'PENANG')
+INSERT INTO EMP (EMP_SALARY , EMP_CITY) VALUES (3000 , 'PENANG')
+INSERT INTO EMP (EMP_SALARY , EMP_CITY) VALUES (6000 , 'KL')
+INSERT INTO EMP (EMP_SALARY , EMP_CITY) VALUES (5000 , 'SELANGOR')
+INSERT INTO EMP (EMP_SALARY , EMP_CITY) VALUES (7000 , 'PENANG')
+INSERT INTO EMP (EMP_SALARY , EMP_CITY) VALUES (4000 , 'KL')
+
+SELECT * FROM EMP;
+
+-- UNIQUE VALUES FOR CITY
+
+SELECT EMP_CITY FROM EMP GROUP BY EMP_CITY;
+
+SELECT EMP_CITY,COUNT(EMP_ID) AS TOTAL FROM EMP GROUP BY EMP_CITY;
+
+SELECT SUM(EMP_SALARY) AS TOTAL_SALARY ,EMP_CITY FROM EMP GROUP BY EMP_CITY;
+
+-- SHOW THOSE CITIES WHERE TOTAL SALARY IS MORE THAN 10000
+
+SELECT SUM(EMP_SALARY) AS TOTAL_SALARY ,EMP_CITY FROM EMP GROUP BY EMP_CITY HAVING SUM(EMP_SALARY) > 10000
+
+
+----------------------------------------------------------------------------------------------------------------
+
+
+-- SQL JOINS
+
+USE db11;
+
+CREATE TABLE employee1(
+EmpID INT,EmpFname VARCHAR(50),
+EmpLname VARCHAR(50) , Age INT,
+EmailID VARCHAR(50),PhoneNo VARCHAR(50),
+Address VARCHAR(50))
+
+INSERT INTO employee1 VALUES (1,'Vardhan','Kumar',22,'vardy@abc.com','9876543210','Delhi')
+INSERT INTO employee1 VALUES (2,'Himani','Sharma',32,'himani@abc.com','9977554422','Mumbai')
+INSERT INTO employee1 VALUES (3,'Aayushi','Shreshth',24,'aayushi@abc.com','9977555121','Kolkata')
+INSERT INTO employee1 VALUES (4,'Hemanth','Sharma',25,'hemanth@abc.com','9876545666','Bengaluru')
+INSERT INTO employee1 VALUES (5,'Swatee','Kapoor',26,'swatee@abc.com','9544567777','Hyderabad')
+
+CREATE TABLE Project (ProjectID	INT , EmpID INT , ClientID INT , ProjectName VARCHAR(50) ,ProjectStartDate VARCHAR(50))
+
+INSERT INTO Project VALUES (111,1,3,'Project1','4/21/2019')
+INSERT INTO Project VALUES (222,2,1,'Project2','2/12/2019')
+INSERT INTO Project VALUES (333,3,5,'Project3','1/10/2019')
+INSERT INTO Project VALUES (444,3,2,'Project4','4/16/2019')
+INSERT INTO Project VALUES (555,5,4,'Project5','5/23/2019')
+INSERT INTO Project VALUES (666,9,1,'Project6','1/12/2019')
+INSERT INTO Project VALUES (777,7,2,'Project7','7/25/2019')
+INSERT INTO Project VALUES (888,8,3,'Project8','8/20/2019')
+
+SELECT * FROM employee1;
+
+SELECT * FROM Project;
+
+-- INNER JOIN
+
+SELECT employee1.EmpID , employee1.EmpFname , employee1.EmpLname , Project.ProjectName
+FROM employee1 INNER JOIN Project ON employee1.EmpID=Project.EmpID
+
+-- INNER JOIN CAN BE USED BY JUST WRITING JOIN
+
+SELECT employee1.EmpID , employee1.EmpFname , employee1.EmpLname , Project.ProjectName
+FROM employee1 JOIN Project ON employee1.EmpID=Project.EmpID
+
+-- FULL JOIN
+
+SELECT employee1.EmpID , employee1.EmpFname , employee1.EmpLname ,Project.ProjectID, Project.ProjectName
+FROM employee1 FULL JOIN Project ON employee1.EmpID=Project.EmpID
+
+-- LEFT JOIN
+
+SELECT employee1.EmpID , employee1.EmpFname , employee1.EmpLname ,Project.ProjectID, Project.ProjectName
+FROM employee1 LEFT JOIN Project ON employee1.EmpID=Project.EmpID
+
+-- RIGHT JOIN
+
+SELECT employee1.EmpID , employee1.EmpFname , employee1.EmpLname ,Project.ProjectID, Project.ProjectName
+FROM employee1 RIGHT JOIN Project ON employee1.EmpID=Project.EmpID
+
+
+----------------------------------------------------------------------------------------------------------------
+
+
+-- SQL Subquery
+
+USE db11;
+
+CREATE TABLE EMPLOYEEINFO(
+ID INT , NAME VARCHAR(50), AGE INT , ADDRESS VARCHAR(50) , SALARY INT);
+
+INSERT INTO EMPLOYEEINFO (ID , NAME , AGE , ADDRESS , SALARY) VALUES (1,'John',20,'US',2000)
+INSERT INTO EMPLOYEEINFO (ID , NAME , AGE , ADDRESS , SALARY) VALUES (2,'Stephan',26,'Dubai',1500)
+INSERT INTO EMPLOYEEINFO (ID , NAME , AGE , ADDRESS , SALARY) VALUES (3,'David',27,'Bangkok',2000)
+INSERT INTO EMPLOYEEINFO (ID , NAME , AGE , ADDRESS , SALARY) VALUES (4,'Alina',29,'UK',6500)
+INSERT INTO EMPLOYEEINFO (ID , NAME , AGE , ADDRESS , SALARY) VALUES (5,'Kathrin',34,'Bangalore',8500)
+INSERT INTO EMPLOYEEINFO (ID , NAME , AGE , ADDRESS , SALARY) VALUES (6,'Harry',42,'China',4500)
+INSERT INTO EMPLOYEEINFO (ID , NAME , AGE , ADDRESS , SALARY) VALUES (7,'Jackson',25,'Mizoram',10000)
+
+SELECT * FROM EMPLOYEEINFO;
+
+
+
+SELECT * FROM EMPLOYEEINFO WHERE ID IN (SELECT ID FROM EMPLOYEEINFO WHERE SALARY > 4500)
+
+UPDATE EMPLOYEEINFO SET SALARY = SALARY * 5 WHERE AGE IN (SELECT AGE FROM EMPLOYEEINFO WHERE AGE>=29)
+
+SELECT * FROM EMPLOYEEINFO;
+
+SELECT NAME , ADDRESS FROM EMPLOYEEINFO WHERE SALARY<AVG(SALARY)
+
+SELECT NAME,ADDRESS FROM EMPLOYEEINFO WHERE SALARY < (SELECT AVG(SALARY) FROM EMPLOYEEINFO)
+
+SELECT NAME FROM EMPLOYEEINFO WHERE SALARY = (SELECT MIN(SALARY) FROM EMPLOYEEINFO)
